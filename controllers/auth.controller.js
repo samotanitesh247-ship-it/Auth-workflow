@@ -3,7 +3,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
 
     const { username, email, password } = req.body;
 
@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
     // now the server create a token and send it to the client for future authentication
 
     const token = jwt.sign({
-        id: newUser._id,
+        id: newUser._id
     }, config.JWT_SECRET, {
         expiresIn : "1d"
     } 
@@ -44,11 +44,24 @@ const registerUser = async (req, res) => {
     );
 
 
-
-
-
-
-
 }
 
-export { registerUser };
+export const getMe = async (req, res)=>{
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if(!token){
+        return res.status(401).json({message: "Token is missing"});
+    }
+
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+
+    const user = await userModel.findById(decoded.id);
+
+    res.status(200).json({message: "user fetched successfully", user: {
+        username: user.username,
+        email: user.email
+    }})
+ }
+
+
+
