@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/samotanitesh247-ship-it/Auth-workflow#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
