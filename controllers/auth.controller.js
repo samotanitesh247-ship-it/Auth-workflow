@@ -60,8 +60,35 @@ export const getMe = async (req, res)=>{
     res.status(200).json({message: "user fetched successfully", user: {
         username: user.username,
         email: user.email
-    }})
- }
+    }});
+}
+
+export const login = async (req,res) => {
+    const {email,password} = req.body;
+
+    const user = await userModel.findOne({email});
+
+    if(!user){
+        return res.status(404).json({message: "user not found"});
+    }
+
+    const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+
+    if(hashedPassword != user.password){
+        return res.status(401).json({message: "invalid credentials"});
+    }
+
+    const token = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET, {
+        expiresIn : "1d"
+    } 
+    )
+
+    res.status(200).json({message: "user login successful", token});
+}
+
+
 
 
 
